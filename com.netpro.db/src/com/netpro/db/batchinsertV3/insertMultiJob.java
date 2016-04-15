@@ -21,6 +21,8 @@ public class insertMultiJob {
 	/**
 	 * @param args
 	 * @throws IOException 
+	 * @author Aggie
+	 * Use this program to insert huge amount jobs.
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 		// TODO Auto-generated method stub
@@ -112,10 +114,10 @@ public class insertMultiJob {
 			StringBuffer sb=new StringBuffer();
 			CopyManager cpManager = ((PGConnection)conn).getCopyAPI();
 			PushbackReader reader = new PushbackReader( new StringReader(""), 10000 );
-			    while(count<10000){
+			    while(count<20000){
 			    count++;
 			    
-			    COLUMN_NAMES[1]="job";
+			    //COLUMN_NAMES[1]="job";
 				COLUMN_NAMES[0]=UUID.randomUUID().toString();
 				//COLUMN_NAMES[0]=UUID.randomUUID().toString().replaceAll("[\\W]|_", "");
 				COLUMN_NAMES[1]=COLUMN_NAMES[1]+count.toString();

@@ -17,7 +17,7 @@ public class insertMultiStepFromJobUid {
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		// TODO Auto-generated method stub
-		String jdbcURL="jdbc:postgresql://localhost/trinity";
+		String jdbcURL="jdbc:postgresql://localhost/trinity4106";
 		String user="trinity";
 		String pwd="trinity";
 		Connection conn = null;
