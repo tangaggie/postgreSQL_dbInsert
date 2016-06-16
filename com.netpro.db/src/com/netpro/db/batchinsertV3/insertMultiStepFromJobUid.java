@@ -17,7 +17,7 @@ public class insertMultiStepFromJobUid {
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		// TODO Auto-generated method stub
-		String jdbcURL="jdbc:postgresql://localhost/trinity4106";
+		String jdbcURL="jdbc:postgresql://localhost/trinity";
 		String user="trinity";
 		String pwd="trinity";
 		Connection conn = null;
@@ -51,17 +51,14 @@ public class insertMultiStepFromJobUid {
 			
 			//Creating statement for db activities
 			stmt=conn.createStatement();
-			String query="SELECT * FROM JOBSTEP";
+			String query="SELECT distinct StepName, XMLData FROM JOBSTEP";
 			
 			rs=stmt.executeQuery(query);
 		    while(rs.next())
 			{
-			 //	 COLUMN_NAMES[5]=rs.getString("JobUID");
+			 	 COLUMN_NAMES[2]=rs.getString("StepName");
 				 COLUMN_NAMES[10]=rs.getString("XMLData");
-			//	count++;
-				System.out.println("Step UID : "+rs.getString("stepUID"));
-				System.out.println("Step Seq : "+rs.getString("stepseq"));
-				System.out.println("Step Name : "+rs.getString("stepname"));
+			 
 			}
 			    StringBuffer sb=new StringBuffer("StepUID,StepSeq,StepName,Description,Activate,JobUID,StepType,SuccessRule,SuccessValue1,SuccessValue2,XMLData");
 			    
@@ -69,23 +66,23 @@ public class insertMultiStepFromJobUid {
 			    	count++;
 			    StringBuffer sqlbur=new StringBuffer();
 				COLUMN_NAMES[0]=UUID.randomUUID().toString();
-				System.out.println("StepUID : "+COLUMN_NAMES[0]);
+			//	System.out.println("StepUID : "+COLUMN_NAMES[0]);
 				COLUMN_NAMES[1]=count.toString();
-				System.out.println("StepSeq : "+COLUMN_NAMES[1]);
-				COLUMN_NAMES[2]="STEP"+count.toString();
-				System.out.println("StepName : "+COLUMN_NAMES[2]);
+			//	System.out.println("StepSeq : "+COLUMN_NAMES[1]);
+				COLUMN_NAMES[2]=COLUMN_NAMES[2].replaceAll("\\d","")+count;
+			//	System.out.println("StepName : "+COLUMN_NAMES[2]);
 				COLUMN_NAMES[5]=args[0];
-				System.out.println("JobUID : "+COLUMN_NAMES[5]);
+			//	System.out.println("JobUID : "+COLUMN_NAMES[5]);
 			
 				      sqlbur.append("INSERT INTO JOBSTEP(" + sb.toString() + ")VALUES ('");
 				      for(j=0;j<COLUMN_NAMES.length-1;j++) { 
 				    	  sqlbur.append(COLUMN_NAMES[j]+"','");
 				      }
 				      sqlbur.append(COLUMN_NAMES[COLUMN_NAMES.length-1]+"')");
-				      System.out.println("sqlbur : "+sqlbur.toString());
+				//      System.out.println("sqlbur : "+sqlbur.toString());
 				      conn.setAutoCommit(true); 
 				      int result=stmt.executeUpdate(sqlbur.toString());
-				      System.out.println("result : "+result);
+				  //    System.out.println("result : "+result);
 			    }
 		}finally{
 			if(conn != null)

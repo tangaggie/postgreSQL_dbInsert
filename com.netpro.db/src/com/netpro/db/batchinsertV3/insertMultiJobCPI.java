@@ -25,15 +25,16 @@ public class insertMultiJobCPI {
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 		// TODO Auto-generated method stub
-		String jdbcURL="jdbc:postgresql://localhost/trinity4106";
+		String jdbcURL="jdbc:postgresql://localhost/trinity";
 		String user="trinity";
 		String pwd="trinity";
 		Connection conn = null;
 		Statement stmt=null;
 		ResultSet rs=null;
-		final int batchSize = 1000;
+		final int batchSize = 5, max =90;
 		Integer count=0;
 		int i,j;
+		 
 		
 		final String[] COLUMN_NAMES = new String[] {
 			"",//"jobuid", 0
@@ -81,27 +82,17 @@ public class insertMultiJobCPI {
 			
 			//Creating statement for db activities
 			stmt=conn.createStatement();
+			 
 			
-			//select jobcategory uid
-			String query1="SELECT * FROM JOBCATEGORY";
-			rs=stmt.executeQuery(query1);
-			int rscount=0;
-			while(rs.next()) {	
-				rscount++;
-				COLUMN_NAMES[5]=rs.getString("categoryuid");				 
-			}
-			
-			//select AGENT uid
-			String query2="SELECT * FROM JCSAGENT";
-			rs=stmt.executeQuery(query2);
-			while(rs.next()) COLUMN_NAMES[6]=rs.getString("agentuid");
-			
-			String query3="SELECT * FROM JOB";
+			String query3="SELECT distinct categoryuid, agentuid, JobName, xmldata FROM JOB";
 			
 			rs=stmt.executeQuery(query3);
+			
 			while(rs.next())
 			{
-				 COLUMN_NAMES[1]=rs.getString("JobName");
+				COLUMN_NAMES[1]=rs.getString("JobName");
+				COLUMN_NAMES[5]=rs.getString("categoryuid");			
+				COLUMN_NAMES[6]=rs.getString("agentuid");
 				 COLUMN_NAMES[23]=rs.getString("xmldata");
 				count++;
 			}
@@ -110,7 +101,7 @@ public class insertMultiJobCPI {
 			 Timestamp timestampStart = new Timestamp(System.currentTimeMillis());
 			CopyManager cpManager = ((PGConnection)conn).getCopyAPI();
 			PushbackReader reader = new PushbackReader( new StringReader(""), 10000 );
-			    while(count<=20000){
+			    while(count<max){
 			    count++;
 			   
 			    COLUMN_NAMES[1]="job";
@@ -118,13 +109,14 @@ public class insertMultiJobCPI {
 				//COLUMN_NAMES[0]=UUID.randomUUID().toString().replaceAll("[\\W]|_", "");
 				COLUMN_NAMES[1]=COLUMN_NAMES[1]+count;
 				//COLUMN_NAMES[2]=dateFormat.format(System.currentTimeMillis());
-				insertMultiStepFromJobUid.main(COLUMN_NAMES);  //call jobstep here.
+				
 				//insertVSI(COLUMN_NAMES,conn, stmt);  
 				insertCPI(COLUMN_NAMES,conn, stmt,count,batchSize,sb,cpManager,reader);  
-				
+				insertMultiStepFromJobUid.main(COLUMN_NAMES);  //call jobstep here.
 			    }
 				reader.unread(sb.toString().toCharArray());
 				cpManager.copyIn("COPY JOB FROM STDIN WITH CSV", reader);
+				
 				 conn.commit();
 				 
 				 
